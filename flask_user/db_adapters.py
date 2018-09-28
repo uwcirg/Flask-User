@@ -7,6 +7,7 @@
 from __future__ import print_function
 from datetime import datetime
 from flask_login import current_user
+from sqlalchemy import func
 
 class DBAdapter(object):
     """ This object is used to shield Flask-User from ORM specific functions.
@@ -88,8 +89,8 @@ class SQLAlchemyAdapter(DBAdapter):
             if field is None:
                 raise KeyError("SQLAlchemyAdapter.find_first_object(): Class '%s' has no field '%s'." % (ObjectClass, field_name))
 
-            # Add a case sensitive filter to the query
-            query = query.filter(field.ilike(field_value))  # case INsensitive!!
+            # Add a case INsensitive filter to the query
+            query = query.filter(func.lower(field) == func.lower(field_value))  # case INsensitive!!
 
         # Execute query
         return query.first()
